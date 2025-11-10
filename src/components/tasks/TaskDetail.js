@@ -1,7 +1,7 @@
-import React, { useState, useEffect } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
-import { taskAPI, projectAPI } from '../../utils/api';
-import { useAuth } from '../../context/AuthContext';
+import React, { useState, useEffect } from "react";
+import { useParams, useNavigate } from "react-router-dom";
+import { taskAPI, projectAPI } from "../../utils/api";
+import { useAuth } from "../../context/AuthContext";
 
 function TaskDetail() {
   const { id } = useParams();
@@ -12,16 +12,17 @@ function TaskDetail() {
   const [loading, setLoading] = useState(true);
   const [editing, setEditing] = useState(false);
   const [formData, setFormData] = useState({
-    title: '',
-    description: '',
-    assignedTo: '',
-    status: '',
-    priority: '',
-    dueDate: '',
+    title: "",
+    description: "",
+    assignedTo: "",
+    status: "",
+    priority: "",
+    dueDate: "",
   });
 
   useEffect(() => {
     fetchTask();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [id]);
 
   const fetchTask = async () => {
@@ -30,18 +31,20 @@ function TaskDetail() {
       setTask(response.data);
       setFormData({
         title: response.data.title,
-        description: response.data.description || '',
-        assignedTo: response.data.assignedTo?._id || '',
+        description: response.data.description || "",
+        assignedTo: response.data.assignedTo?._id || "",
         status: response.data.status,
         priority: response.data.priority,
-        dueDate: response.data.dueDate ? response.data.dueDate.split('T')[0] : '',
+        dueDate: response.data.dueDate
+          ? response.data.dueDate.split("T")[0]
+          : "",
       });
-      
+
       if (response.data.project) {
         fetchProjectMembers(response.data.project._id);
       }
     } catch (error) {
-      console.error('Failed to fetch task:', error);
+      console.error("Failed to fetch task:", error);
     } finally {
       setLoading(false);
     }
@@ -52,7 +55,7 @@ function TaskDetail() {
       const response = await projectAPI.getById(projectId);
       setMembers(response.data.members || []);
     } catch (error) {
-      console.error('Failed to fetch members:', error);
+      console.error("Failed to fetch members:", error);
     }
   };
 
@@ -70,37 +73,46 @@ function TaskDetail() {
       setTask(response.data);
       setEditing(false);
     } catch (error) {
-      alert(error.response?.data?.message || 'Failed to update task');
+      alert(error.response?.data?.message || "Failed to update task");
     }
   };
 
   const handleDelete = async () => {
-    if (window.confirm('Are you sure you want to delete this task?')) {
+    if (window.confirm("Are you sure you want to delete this task?")) {
       try {
         await taskAPI.delete(id);
-        navigate('/tasks');
+        navigate("/tasks");
       } catch (error) {
-        alert(error.response?.data?.message || 'Failed to delete task');
+        alert(error.response?.data?.message || "Failed to delete task");
       }
     }
   };
 
   const getStatusColor = (status) => {
     switch (status) {
-      case 'todo': return 'bg-gray-100 text-gray-800';
-      case 'in_progress': return 'bg-blue-100 text-blue-800';
-      case 'review': return 'bg-purple-100 text-purple-800';
-      case 'done': return 'bg-green-100 text-green-800';
-      default: return 'bg-gray-100 text-gray-800';
+      case "todo":
+        return "bg-gray-100 text-gray-800";
+      case "in_progress":
+        return "bg-blue-100 text-blue-800";
+      case "review":
+        return "bg-purple-100 text-purple-800";
+      case "done":
+        return "bg-green-100 text-green-800";
+      default:
+        return "bg-gray-100 text-gray-800";
     }
   };
 
   const getPriorityColor = (priority) => {
     switch (priority) {
-      case 'high': return 'bg-red-100 text-red-800';
-      case 'medium': return 'bg-yellow-100 text-yellow-800';
-      case 'low': return 'bg-green-100 text-green-800';
-      default: return 'bg-gray-100 text-gray-800';
+      case "high":
+        return "bg-red-100 text-red-800";
+      case "medium":
+        return "bg-yellow-100 text-yellow-800";
+      case "low":
+        return "bg-green-100 text-green-800";
+      default:
+        return "bg-gray-100 text-gray-800";
     }
   };
 
@@ -125,7 +137,7 @@ function TaskDetail() {
       <div className="flex items-center justify-between mb-6">
         <div className="flex items-center">
           <button
-            onClick={() => navigate('/tasks')}
+            onClick={() => navigate("/tasks")}
             className="mr-4 text-gray-600 hover:text-gray-900"
           >
             ← Back
@@ -193,7 +205,7 @@ function TaskDetail() {
                 <option value="">Unassigned</option>
                 {members.map((member) => (
                   <option key={member._id} value={member._id}>
-                    {member.name} {member._id === user._id ? '(You)' : ''}
+                    {member.name} {member._id === user._id ? "(You)" : ""}
                   </option>
                 ))}
               </select>
@@ -260,11 +272,11 @@ function TaskDetail() {
                   setEditing(false);
                   setFormData({
                     title: task.title,
-                    description: task.description || '',
-                    assignedTo: task.assignedTo?._id || '',
+                    description: task.description || "",
+                    assignedTo: task.assignedTo?._id || "",
                     status: task.status,
                     priority: task.priority,
-                    dueDate: task.dueDate ? task.dueDate.split('T')[0] : '',
+                    dueDate: task.dueDate ? task.dueDate.split("T")[0] : "",
                   });
                 }}
                 className="px-6 py-2 border border-gray-300 rounded-md text-gray-700 hover:bg-gray-50"
@@ -279,62 +291,88 @@ function TaskDetail() {
           <div className="mb-6">
             <div className="flex items-center space-x-3 mb-4">
               <h3 className="text-2xl font-bold text-gray-900">{task.title}</h3>
-              <span className={`px-3 py-1 text-sm rounded-full ${getStatusColor(task.status)}`}>
-                {task.status.replace('_', ' ')}
+              <span
+                className={`px-3 py-1 text-sm rounded-full ${getStatusColor(
+                  task.status
+                )}`}
+              >
+                {task.status.replace("_", " ")}
               </span>
-              <span className={`px-3 py-1 text-sm rounded-full ${getPriorityColor(task.priority)}`}>
+              <span
+                className={`px-3 py-1 text-sm rounded-full ${getPriorityColor(
+                  task.priority
+                )}`}
+              >
                 {task.priority} priority
               </span>
             </div>
 
             <p className="text-gray-700 whitespace-pre-wrap">
-              {task.description || 'No description provided'}
+              {task.description || "No description provided"}
             </p>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
             <div>
-              <h4 className="text-sm font-medium text-gray-500 mb-2">Project</h4>
+              <h4 className="text-sm font-medium text-gray-500 mb-2">
+                Project
+              </h4>
               <p
                 className="text-blue-600 hover:text-blue-800 cursor-pointer"
                 onClick={() => navigate(`/projects/${task.project._id}`)}
               >
-                {task.project?.title || 'No project'}
+                {task.project?.title || "No project"}
               </p>
             </div>
 
             <div>
-              <h4 className="text-sm font-medium text-gray-500 mb-2">Assigned To</h4>
+              <h4 className="text-sm font-medium text-gray-500 mb-2">
+                Assigned To
+              </h4>
               <p className="text-gray-900">
-                {task.assignedTo ? `${task.assignedTo.name} (${task.assignedTo.email})` : 'Unassigned'}
+                {task.assignedTo
+                  ? `${task.assignedTo.name} (${task.assignedTo.email})`
+                  : "Unassigned"}
               </p>
             </div>
 
             <div>
-              <h4 className="text-sm font-medium text-gray-500 mb-2">Created By</h4>
+              <h4 className="text-sm font-medium text-gray-500 mb-2">
+                Created By
+              </h4>
               <p className="text-gray-900">
                 {task.createdBy?.name} ({task.createdBy?.email})
               </p>
             </div>
 
             <div>
-              <h4 className="text-sm font-medium text-gray-500 mb-2">Due Date</h4>
+              <h4 className="text-sm font-medium text-gray-500 mb-2">
+                Due Date
+              </h4>
               <p className="text-gray-900">
-                {task.dueDate ? new Date(task.dueDate).toLocaleDateString() : 'No due date'}
+                {task.dueDate
+                  ? new Date(task.dueDate).toLocaleDateString()
+                  : "No due date"}
               </p>
             </div>
 
             <div>
-              <h4 className="text-sm font-medium text-gray-500 mb-2">Created</h4>
+              <h4 className="text-sm font-medium text-gray-500 mb-2">
+                Created
+              </h4>
               <p className="text-gray-900">
-                {new Date(task.createdAt).toLocaleDateString()} at {new Date(task.createdAt).toLocaleTimeString()}
+                {new Date(task.createdAt).toLocaleDateString()} at{" "}
+                {new Date(task.createdAt).toLocaleTimeString()}
               </p>
             </div>
 
             <div>
-              <h4 className="text-sm font-medium text-gray-500 mb-2">Last Updated</h4>
+              <h4 className="text-sm font-medium text-gray-500 mb-2">
+                Last Updated
+              </h4>
               <p className="text-gray-900">
-                {new Date(task.updatedAt).toLocaleDateString()} at {new Date(task.updatedAt).toLocaleTimeString()}
+                {new Date(task.updatedAt).toLocaleDateString()} at{" "}
+                {new Date(task.updatedAt).toLocaleTimeString()}
               </p>
             </div>
           </div>
