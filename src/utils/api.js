@@ -1,8 +1,7 @@
 import axios from 'axios';
 
 // Use environment variable or fallback to production URL
-const API_URL = process.env.REACT_APP_API_URL || 'https://task-management-api.onrender.com/api';
-
+const API_URL = process.env.REACT_APP_API_URL || 'https://task-management-api-rq47.onrender.com/api';
 // Create axios instance
 const api = axios.create({
   baseURL: API_URL,
