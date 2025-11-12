@@ -16,7 +16,7 @@ export const AuthProvider = ({ children }) => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  // Check if user is logged in on mount
+  // ✅ Check token on mount
   useEffect(() => {
     const checkUser = async () => {
       const token = localStorage.getItem('token');
@@ -33,13 +33,15 @@ export const AuthProvider = ({ children }) => {
     checkUser();
   }, []);
 
-  // Register user
+  // ✅ Register
   const register = async (userData) => {
     try {
       setError(null);
       const response = await authAPI.register(userData);
-      localStorage.setItem('token', response.data.token);
-      setUser(response.data);
+      const { token, ...userInfo } = response.data;
+
+      localStorage.setItem('token', token); // store token immediately
+      setUser(userInfo);
       return response.data;
     } catch (error) {
       const message = error.response?.data?.message || 'Registration failed';
@@ -48,13 +50,15 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
-  // Login user
+  // ✅ Login
   const login = async (userData) => {
     try {
       setError(null);
       const response = await authAPI.login(userData);
-      localStorage.setItem('token', response.data.token);
-      setUser(response.data);
+      const { token, ...userInfo } = response.data;
+
+      localStorage.setItem('token', token); // store token immediately
+      setUser(userInfo);
       return response.data;
     } catch (error) {
       const message = error.response?.data?.message || 'Login failed';
@@ -63,7 +67,6 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
-  // Logout user
   const logout = () => {
     localStorage.removeItem('token');
     setUser(null);
@@ -78,5 +81,9 @@ export const AuthProvider = ({ children }) => {
     logout,
   };
 
-  return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
+  return (
+    <AuthContext.Provider value={value}>
+      {children}
+    </AuthContext.Provider>
+  );
 };
